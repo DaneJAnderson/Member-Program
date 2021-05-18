@@ -46,8 +46,8 @@ function WithErrorHandler(WrappedComponent, axios) {
         }
         return(            
             <div >
-                {error}
-                {/* <h1> We doing Something !! </h1> */}
+                {/* {error} */}
+                
                 <WrappedComponent {...this.props} />
             </div>
         ) ;

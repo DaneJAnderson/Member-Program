@@ -1,7 +1,7 @@
 import React,{ Component, Suspense } from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import Home from './Home/HomeComp';
+// import Home from './Home/HomeComp';
 // import Login from './Login/LoginComp';
 
 // import asyncComponent from './HOC/asyncComponent';
@@ -23,7 +23,8 @@ import {
 }); */
 
 
-const OtherComponent = React.lazy(() => import('./Login/LoginComp'));
+const loginComp = React.lazy(() => import('./Login/LoginComp'));
+const homeComp = React.lazy(() => import('./Home/HomeComp'));
 
 class App extends Component{
 
@@ -45,10 +46,11 @@ render() {
         {/* <Route path="/login" component={Login} />        */}
         {/* <Route path="/login" component={asyncLogin} />   */}
         <Suspense fallback={<div>Loading...</div>}>
-        <Route path="/login" component={OtherComponent} /> 
+        <Route path="/login" component={loginComp} /> 
+        <Route exact path="/" component={homeComp} /> 
 
 
-       <Route exact path="/"><Home/></Route>
+       {/* <Route exact path="/"><Home/></Route> */}
         </Suspense>     
       </Switch>
     </div>

@@ -5,6 +5,7 @@ import App from './App';
 // import homeStore from './Store/homeStore'
 import Store from './Store/store'
 import {Provider} from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import reportWebVitals from './reportWebVitals';
 

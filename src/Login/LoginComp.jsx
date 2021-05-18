@@ -41,10 +41,7 @@ import {increment,decrement} from '../Store/actions';
            setLogTimes(res.data.entries.length);
 
            console.log('logTimes ', logTimes);
-          }
-                      
-
- 
+          }    
         }
        
       }).catch( error =>{
@@ -72,10 +69,11 @@ import {increment,decrement} from '../Store/actions';
         </button>
       </div>
     );
-
-    
-    
+  
 } 
+
 Login.defaultProps = {name: 'jonny'}
 
 export default WithErrorHandler(Login, axios);
+
+// export default connect(mapStateToProps,mapDispatchToProps )(withTheme(withStyles(styles)(WithErrorHandler(Login, axios))));
