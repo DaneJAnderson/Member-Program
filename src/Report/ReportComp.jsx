@@ -41,9 +41,13 @@ class Home extends Component {
       new_member_acc:'',
       referrer_name:'',
       referrer_acc:'',
-      date:'',
+      dateFrom:'',
+      dateTo:'',
       branch:'',
-      auth:0
+      mergeDate:{
+        fromDate:'',
+        toDate:'',
+      }
     }    
 
     componentDidMount() {
@@ -51,13 +55,37 @@ class Home extends Component {
     const token = sessionStorage.getItem('token');
     const email = sessionStorage.getItem('email');
     const username = sessionStorage.getItem('username');   
-   
       
    if( (!token&&!username&&!email) ){  this.props.history.replace('/login');  }
 
    this.tick();
-    
+
+   this.dateReport();
+
   }   
+
+  setMergeDate(){
+
+    // this.setState({mergeDate:{this.state.dateFrom}})
+  }
+
+
+  dateReport(){
+
+    axios.post('http://localhost/member-referral/public/api/reports', this.state.mergeDate)                               
+    .then(response => { 
+        
+        if(response.data.status === 1)
+        {       
+          console.log(response.data);
+        }
+                              
+    }).catch(error => {                
+                   console.log('date report Error', error)
+     })
+
+  }
+
 
     componentDidUpdate(){ }
   
@@ -66,7 +94,8 @@ class Home extends Component {
     tick() {
       var date = new Date(); // Or the date you'd like converted.
       var isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 10);      
-      this.setState({ date: isoDateTime });
+      this.setState({ dateFrom: isoDateTime });
+      this.setState({ dateTo: isoDateTime });
    }
   
     render() {
@@ -86,132 +115,49 @@ class Home extends Component {
 
       <Grid item xs={12} md={10}  className="mt-4">
         <Card >
-          <CardContent className=''>
+          <CardContent >
 
       {/* ***************************************************************** */}
       <Grid container alignItems="center" justify="center" >
-      <Grid item xs={12} md={8} className="" >
+      <Grid item xs={12} md={8}  >
 
-          <form className={classes.root }  autoComplete="off"> {/*noValidate */}
-
-
-       {/* -------------------- Member Account Number ------------ */}
-
-        <TextField fullWidth 
-          error={isNaN(this.state.new_member_acc)}
-          id=""
-          label="New Member Account #"
-          // defaultValue="Hello World"
-          helperText={helperMemberACC}
-          variant="outlined"
-          // placeholder =""
-          onChange={(e) => this.setState({new_member_acc: e.target.value})}          
-          value={this.state.new_member_acc}
-          required
-        />
-
-        <br/><br/>
-
+          <form  autoComplete="off"> {/*noValidate */}
       
-        {/* --------------------------- Member Name ------------------- */}
-       
-        <TextField fullWidth 
-          error={false}
-          id=""
-          label="New Member Name"
-          // defaultValue="Hello World"
-          // helperText="Incorrect entry."
-          variant="outlined"
-          // placeholder =""
-          onChange={(e) => this.setState({new_member_name: e.target.value})}          
-          value={this.state.new_member_name}
-          required
-        />
-        <br/><br/>
-                
-        {/* --------------------------- Referrer's Name ------------------- */}
-       
-        
-        <TextField fullWidth 
-          error={false}
-          id=""
-          label="Referrer's Name"
-          // defaultValue="Hello World"
-          // helperText=""
-          variant="outlined"
-          // placeholder =""
-          onChange={(e) => this.setState({referrer_name: e.target.value})}          
-          value={this.state.referrer_name}
-          required
-        />
-
-        <br/><br/>
-
-         {/* ---------------- Referrer's Account Number -----------------*/}
-
-        <TextField fullWidth 
-          error={isNaN(this.state.referrer_acc)}
-          id=""
-          label="Referrer's Account #"
-          // defaultValue="Hello World"
-          helperText={helperReferrerACC}
-          variant="outlined"
-          // placeholder =""
-          onChange={(e) => this.setState({referrer_acc: e.target.value})}          
-          value={this.state.referrer_acc}
-          required
-        />
-
-        <br/><br/>
-
-      {/* -------------------------------- Branch -------------------------- */}
-
-        <TextField fullWidth 
-          error={false}
-          id=""
-          label="Branch"
-          // defaultValue="Hello World"
-          // helperText="Incorrect entry."
-          variant="outlined"
-          // placeholder =""
-          onChange={(e) => this.setState({branch: e.target.value})}          
-          value={this.state.branch}
-          required
-        />
-
         <br/><br/>
 
       {/* -------------------------  Date --------------------- */}
-
+<div style={{width:'50%', display:'inline'}} className="ml-5 mr-5 pr-5 w-50"> 
       <TextField
-        id="date"
-        label="Date"
+        id="dateFrom"
+        label="From Date"
         type="date"
-        // defaultValue="2017-05-24"
-        // defaultValue={this.state.date}
         className={classes.textField}
         InputLabelProps={{
           shrink: true,
         }}
-        value={this.state.date}
-        onChange={(e) => this.setState({date: e.target.value})}
+        value={this.state.dateFrom}
+        onChange={(e) => this.setState({dateFrom: e.target.value})}
       />
+      </div >
 
-        {/* <TextField fullWidth 
-          error={false}
-          id=""
-          label="Date"
-          // defaultValue="Hello World"
-          // helperText="Incorrect entry."
-          variant="outlined"
-          // placeholder =""
-          onChange={(e) => this.setState({date: e.target.value})}          
-          value={this.state.date}
-          required
-        /> */}
+      <div style={{width:'50%', display:'inline'}} >
+      <TextField
+      
+        id="dateTo"
+        label="To Date"
+        type="date"
+        className={classes.textField}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        value={this.state.dateTo}
+        onChange={(e) => this.setState({dateTo: e.target.value})}
+      /></div>
+
+  
 
         <br/><br/><br/>
-     <Button size="medium" type="submit" className='bg-success text-white float-right'>Submit</Button>
+     <Button size="medium" type="submit" className='bg-primary text-white float-right'>Download</Button>
     </form>
     </Grid></Grid>
 
@@ -229,17 +175,7 @@ class Home extends Component {
     </Card>
         </Grid>
 
-        {/* <Grid item xs={5}  >
-        <Card className=''>
-      <CardContent>
-        <p>This is a Card 2</p>
-      </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
-    </Card>
-        </Grid>
-        */}
+  
       </Grid>
 
       {/*     <h1>Hello, world! </h1>

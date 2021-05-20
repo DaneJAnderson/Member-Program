@@ -15,8 +15,8 @@ function WithErrorHandler(WrappedComponent, axios) {
         }
 
       componentDidUpdate(prevProps) {
-        console.log('Current props: ', this.props);
-        console.log('Previous props: ', prevProps);
+        // console.log('Current props: ', this.props);
+        // console.log('Previous props: ', prevProps);
       }
 
       componentWillUnmount(){

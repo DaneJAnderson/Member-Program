@@ -25,6 +25,7 @@ import {
 
 const loginComp = React.lazy(() => import('./Login/LoginComp'));
 const homeComp = React.lazy(() => import('./Home/HomeComp'));
+const reportComp = React.lazy(() => import('./Report/ReportComp'));
 
 class App extends Component{
 
@@ -48,6 +49,7 @@ render() {
         <Suspense fallback={<div>Loading...</div>}>
         <Route path="/login" component={loginComp} /> 
         <Route exact path="/" component={homeComp} /> 
+        <Route exact path="/report" component={reportComp} /> 
 
 
        {/* <Route exact path="/"><Home/></Route> */}
