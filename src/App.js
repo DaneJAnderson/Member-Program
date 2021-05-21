@@ -29,15 +29,12 @@ const reportComp = React.lazy(() => import('./Report/ReportComp'));
 
 class App extends Component{
 
-
   constructor(props) {
     super(props);
     this.state = {date: new Date()};
-  }
-  
+  }  
 
-render() {
-  
+render() {  
 
   return (
     <Router>
@@ -46,7 +43,7 @@ render() {
       <Switch>
         {/* <Route path="/login" component={Login} />        */}
         {/* <Route path="/login" component={asyncLogin} />   */}
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div></div>}>
         <Route path="/login" component={loginComp} /> 
         <Route exact path="/" component={homeComp} /> 
         <Route exact path="/report" component={reportComp} /> 

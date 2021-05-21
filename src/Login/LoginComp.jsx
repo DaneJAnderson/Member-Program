@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import WithErrorHandler from '../HOC/withErrorHandler';
 import axios from 'axios';
-import {useSelector,useDispatch} from 'react-redux';
-import {increment,decrement} from '../Store/actions';
 import Button from '@material-ui/core/Button';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -13,14 +9,18 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { Link, useHistory } from 'react-router-dom';
-
+import { useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 
-const useStyles = makeStyles((theme) => ({
+/* import {useSelector,useDispatch} from 'react-redux';
+import {increment,decrement} from '../Store/actions';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx'; */
+
+/* const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -34,14 +34,11 @@ const useStyles = makeStyles((theme) => ({
   textField: {   
     width: '100%',
   },
-}));
+})); */
 
     const Login = (props) =>{
 
-// ******************************************************************* //
-
-  const classes = useStyles();
-
+  // const classes = useStyles();
   let history = useHistory();
   const [postLogin, setpostLogin] = useState({
     username:'',
@@ -71,18 +68,15 @@ const useStyles = makeStyles((theme) => ({
   };
 
   const submit = (event)=>{
-
     setpostLogin({...postLogin,password:values.password,username:values.username});
-
-    console.log(postLogin);
-
+    // console.log(postLogin);
   }
 
   const [auth, setAuth] = useState('');
   const incorrect =
     <h4 className="text-center text-danger mt-4">{auth}</h4>;
 
-  // ************************************************************************ // 
+  // --------------------------------------------------------------------------- // 
 
     // Similar to componentDidMount and componentDidUpdate:
     useEffect(() => {
@@ -96,29 +90,20 @@ const useStyles = makeStyles((theme) => ({
     sessionStorage.removeItem('email');
 
 
-      // return new Promise((resolve, reject) => {        
+      return new Promise((resolve, reject) => {        
         axios.post('http://localhost/intranet/public/api/userlogin', postLogin)                               
         .then(response => {  
             // resolve(response);   
-            
-            console.log(response.data);
-
             if(response.data.status === 1)
-            {              
-
+            { 
             sessionStorage.setItem('token', response.data.token);             
             sessionStorage.setItem('username', response.data.username);             
-            sessionStorage.setItem('email', response.data.email); 
-  
-            history.replace('/');
-
-            
+            sessionStorage.setItem('email', response.data.email);   
+            history.replace('/');            
             }
             else{
-
               setAuth(response.data.status);
-            }
-                      
+            }                      
             // localStorage.setItem('token', response.data.token);             
             // localStorage.setItem('username', response.data.username);             
         }).catch(error => {                
@@ -130,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
             // reject(error);           
          })
 
-        // })
+        })
       
 
     },[postLogin,history]);
@@ -163,7 +148,7 @@ const useStyles = makeStyles((theme) => ({
 {/* --------------------------- Username ---------------------------  */}
   
 
-  <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
+  <FormControl className="w-100 m-2"  variant="outlined">{/*className={clsx(classes.margin, classes.textField)}*/}
   <InputLabel htmlFor="outlined-adornment-password">Username</InputLabel>
           <OutlinedInput
             id="outlined-adornment-username"
@@ -181,7 +166,7 @@ const useStyles = makeStyles((theme) => ({
 
 {/* ---------------------------- Password Field ------------------------------ */}
 
-<FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
+<FormControl className="w-100 m-2 mt-3" variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
           <OutlinedInput
             id="outlined-adornment-password"

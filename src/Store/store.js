@@ -13,7 +13,7 @@ const allReducers = combineReducers({
 const store = createStore(allReducers);
 
 // Display State in console
-store.subscribe(()=>console.log(store.getState()));
+// store.subscribe(()=>console.log(store.getState()));
 
 // DISPATCH === CALL an Action(task name or vue mutation NAME)
 store.dispatch(increment());

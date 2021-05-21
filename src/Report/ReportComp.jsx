@@ -3,31 +3,29 @@ import {connect} from 'react-redux';
 import {increment,decrement} from '../Store/actions';
 import WithErrorHandler from '../HOC/withErrorHandler';
 import axios from 'axios';
-
 import Button from '@material-ui/core/Button';
 import Header from '../Header/Header';
-
-import { withStyles, withTheme  } from '@material-ui/core/styles';
-
-import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
+
+// import { withStyles, withTheme  } from '@material-ui/core/styles';
+// import Paper from '@material-ui/core/Paper';
+// import CardActions from '@material-ui/core/CardActions';
+// import Typography from '@material-ui/core/Typography';
 
 
-const styles = (theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
-});
+// const styles = (theme) => ({
+//   root: {
+//     flexGrow: 1,
+//   },
+//   paper: {
+//     padding: theme.spacing(2),
+//     textAlign: 'center',
+//     color: theme.palette.text.secondary,
+//   },
+// });
 
 class Home extends Component {
     /* constructor(props) {
@@ -35,19 +33,12 @@ class Home extends Component {
       this.state = {date: new Date()};
     } */
       
-    state = {     
-      counter:'',
-      new_member_name:'',
-      new_member_acc:'',
-      referrer_name:'',
-      referrer_acc:'',
+    state = {   
+      
       dateFrom:'',
-      dateTo:'',
-      branch:'',
-      mergeDate:{
-        fromDate:'',
-        toDate:'',
-      }
+      dateTo:'', 
+      csv:{},    
+   
     }    
 
     componentDidMount() {
@@ -59,33 +50,66 @@ class Home extends Component {
    if( (!token&&!username&&!email) ){  this.props.history.replace('/login');  }
 
    this.tick();
-
-   this.dateReport();
-
   }   
 
-  setMergeDate(){
+  dateReport= ()=>{
 
-    // this.setState({mergeDate:{this.state.dateFrom}})
-  }
-
-
-  dateReport(){
-
-    axios.post('http://localhost/member-referral/public/api/reports', this.state.mergeDate)                               
+    return new Promise((resolve, reject) => { 
+    axios.post('http://localhost/member-referral/public/api/reports', this.state)                               
     .then(response => { 
         
+      resolve(response); 
         if(response.data.status === 1)
-        {       
-          console.log(response.data);
+        {  
+          //  Get date report
+          // console.log(response.data.members[0]);
+          // this.setState({...this.state.csv,csv:response.data.members});
+          // console.log(response.data.members);
+          this.downloadCSV(response.data.members);
         }
-                              
-    }).catch(error => {                
-                   console.log('date report Error', error)
-     })
-
+        
+      }).catch(error => {                
+        console.log('date report Error: ', error)
+        reject(error);  
+      })
+    })
+      
+      
   }
 
+  
+   downloadCSV(data){
+
+          // console.log('CSV: ',this.state.csv);
+
+      // if(this.state.csv[0]){
+      if(data){
+
+      // var rows = this.state.csv;
+      var rows = data;
+
+      var arr = typeof rows !== 'object' ? JSON.parse(rows) : rows;
+      
+      var str =
+      `${Object.keys(arr[0])
+      .map((value) => `"${value}"`)
+      .join(',')}` + '\r\n';
+      var csvContent = arr.reduce((st, next) => {
+      st +=
+      `${Object.values(next)
+      .map((value) => `"${value}"`)
+      .join(',')}` + '\r\n';
+      return st;
+      }, str);
+      var element = document.createElement('a');
+      element.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
+      element.target = '_blank';
+      element.download = 'Suggestion.csv';
+      element.click();               
+
+
+    }
+ } 
 
     componentDidUpdate(){ }
   
@@ -95,7 +119,7 @@ class Home extends Component {
       var date = new Date(); // Or the date you'd like converted.
       var isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 10);      
       this.setState({ dateFrom: isoDateTime });
-      this.setState({ dateTo: isoDateTime });
+      this.setState({ dateTo: isoDateTime });    
    }
   
     render() {
@@ -109,7 +133,7 @@ class Home extends Component {
 
       return (  
         
-      <div className={classes.root }>
+      <div >  {/*className={classes.root }*/}
         <Header />
       <Grid container  alignItems="center" justify="center" >
 
@@ -117,21 +141,22 @@ class Home extends Component {
         <Card >
           <CardContent >
 
-      {/* ***************************************************************** */}
+      {/* ----------------------------------------------------------------- */}
       <Grid container alignItems="center" justify="center" >
-      <Grid item xs={12} md={8}  >
+      <Grid item xs={12} md={7} lg={6} >
 
-          <form  autoComplete="off"> {/*noValidate */}
+    <form  autoComplete="off"> {/*noValidate */}
       
         <br/><br/>
 
       {/* -------------------------  Date --------------------- */}
-<div style={{width:'50%', display:'inline'}} className="ml-5 mr-5 pr-5 w-50"> 
+      <div style={{width:'50%', display:'inline'}} className="ml-5 mr-5 pr-5 w-50"> 
       <TextField
         id="dateFrom"
         label="From Date"
         type="date"
-        className={classes.textField}
+        helperText="mm / dd / yyyy"
+        // className={classes.textField}
         InputLabelProps={{
           shrink: true,
         }}
@@ -146,18 +171,18 @@ class Home extends Component {
         id="dateTo"
         label="To Date"
         type="date"
-        className={classes.textField}
+        helperText="mm / dd / yyyy"
+        // className={classes.textField}
         InputLabelProps={{
           shrink: true,
         }}
         value={this.state.dateTo}
         onChange={(e) => this.setState({dateTo: e.target.value})}
       /></div>
-
   
 
-        <br/><br/><br/>
-     <Button size="medium" type="submit" className='bg-primary text-white float-right'>Download</Button>
+    <br/><br/><br/>
+     <Button size="medium" onClick={this.dateReport}  className='bg-primary text-white float-right'>Download</Button> {/*type="submit"*/}
     </form>
     </Grid></Grid>
 
@@ -172,11 +197,9 @@ class Home extends Component {
       </CardActions> */}
 
 
-    </Card>
-        </Grid>
-
-  
-      </Grid>
+        </Card>
+    </Grid>  
+    </Grid>
 
       {/*     <h1>Hello, world! </h1>
         <button onClick={() => this.props.decrement(14)}>
@@ -184,7 +207,7 @@ class Home extends Component {
         </button>
           <h1>Redux Counter: {this.props.counter} </h1>
           <h1>Redux Counter: {this.props.counting} </h1>
-  */}
+      */}
           
         </div>
       );
@@ -199,9 +222,10 @@ class Home extends Component {
   const mapDispatchToProps = (dispatch) => {
     return {
       increment: (val) => dispatch(increment(val)),
-       decrement:(val) => dispatch(decrement(val))
+      decrement:(val) => dispatch(decrement(val))
   
     };
   };
 
- export default connect(mapStateToProps,mapDispatchToProps )(withTheme(withStyles(styles)(WithErrorHandler(Home, axios))));
+ export default connect(mapStateToProps,mapDispatchToProps )(WithErrorHandler(Home, axios));
+//  export default connect(mapStateToProps,mapDispatchToProps )(withTheme(withStyles(styles)(WithErrorHandler(Home, axios))));
